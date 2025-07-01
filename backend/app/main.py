@@ -30,21 +30,24 @@ async def add_user(user:User):
      )
 
 
-@app.post("/learning-profile")
-async def profile_data(profile:Profile):
-    if profile:
+@app.post("/create-learning-profile")
+async def profile_data(profile: Profile):
+    try:
         data = profile.model_dump()
         result = await db["learning_profiles"].insert_one(data)
-        data["_id"] = str(result.inserted_id) 
-
+        
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
             content={
-                "message":"Learning profile created",
-                "data":data
+                "message": "Learning profile created successfully",
+                "data": {**data, "_id": str(result.inserted_id)}
             }
         )
-
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,                       
+            detail=f"Failed to create profile: {str(e)}"
+        )
 
 @app.get("/user")
 async def get_user():
