@@ -10,7 +10,7 @@ function App() {
   return (
     <>
     <main className='max-w-7xl min-h-screen bg-[#020617]'>
-    <div className='w-full grid grid-cols-12'>
+    <div className='w-full sm:grid sm:grid-cols-12 '>
       <aside className='w-full col-start-1 col-end-4'>
        <SidebarForm 
        submiting={submiting}

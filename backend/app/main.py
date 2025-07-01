@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException , status 
+from fastapi import FastAPI, HTTPException , status
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from database.connection import db
 from models.user import User
 from models.roadmap import Roadmap
@@ -9,6 +10,13 @@ from typing import Any
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/user")
 async def add_user(user:User):
@@ -30,7 +38,7 @@ async def add_user(user:User):
      )
 
 
-@app.post("/create-learning-profile")
+@app.post("/learning-profile")
 async def profile_data(profile: Profile):
     try:
         data = profile.model_dump()

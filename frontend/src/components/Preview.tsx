@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Youtube, Globe, Calendar, BarChart3, Mail, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
+import Mobileform from "./Mobile-form"
 
 export default function Preview() {
   const features = [
@@ -174,6 +175,7 @@ export default function Preview() {
               </motion.div>
             ))}
           </motion.div>
+          <Mobileform trigger={<Badge variant="secondary" className="sm:hidden px-5 py-2 mt-4 bg-purple-100 text-purple-700 border-purple-200">Get started</Badge>}/>  
         </motion.div>
 
         {/* Features Grid */}
@@ -194,7 +196,7 @@ export default function Preview() {
                 className="flex"
               >
                 <Card className="group bg-[#180931] border-0 shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer flex-1 backdrop-blur-sm">
-                  <CardHeader className="pb-3 pt-4 px-4">
+                  <CardHeader className="pb-3 pt-2 px-4">
                     <motion.div
                       className={`w-10 h-10 rounded-lg bg-gradient-to-r ${feature.gradient} flex items-center justify-center mb-3 text-white shadow-lg`}
                       variants={iconVariants}

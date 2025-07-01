@@ -3,6 +3,13 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Plus, Trash2, Send } from 'lucide-react'
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+    DialogClose,
+  } from "@/components/ui/dialog"
+import { Button } from './ui/button'
 
 
 const skillSchema = z.object({
@@ -24,9 +31,9 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>
 
 
-function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Function}) {
+function Mobileform({trigger}:{trigger:React.ReactNode}) {
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
-
+  const [submiting, isSubmiting] = useState<Boolean>(false)
   const {
     register,
     control,
@@ -93,10 +100,20 @@ function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Func
   }
 
   return (
-    <div className='w-full min-h-screen bg-[#170730] p-6 hidden sm:block'>
-      <div className="max-w-md mx-auto">
+    <Dialog>
+  <DialogTrigger>{trigger}</DialogTrigger>
+  <DialogContent className="p-0 max-w-md w-full bg-[#170730] sm:hidden rounded-lg overflow-hidden">
+  <div className="max-h-[90vh] overflow-y-auto p-4">
+      <div className="w-full mx-auto">
+        <div className='w-full flex-row justify-between items-center'>
         <h2 className="text-2xl font-bold text-white mb-6">Learning Profile</h2>
-        
+        <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
+        </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Goal Field */}
           <div>
@@ -189,7 +206,6 @@ function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Func
             )}
           </div>
 
-          {/* Duration Field */}
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-2">
               Duration (months) *
@@ -206,7 +222,7 @@ function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Func
             )}
           </div>
 
-          {/* Weekly Hours Field */}
+        
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-2">
               Weekly Hours *
@@ -223,7 +239,7 @@ function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Func
             )}
           </div>
 
-          {/* Learning Style Field */}
+          Learning Style Field
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-2">
               Learning Style *
@@ -270,7 +286,9 @@ function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Func
         </form>
       </div>
     </div>
+   </DialogContent>
+   </Dialog>
   )
 }
 
-export default Sidebarform
+export default Mobileform
