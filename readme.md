@@ -6,13 +6,13 @@ A full-stack intelligent learning assistant that helps users generate personaliz
 
 ## 🚀 Features
 
-- ✨ Intelligent goal-based AI roadmap generation
-- 🧠 Modular OpenAI Agent system using function tools
-- 📊 Weekly planning with skill tracking & visualization support
-- 🔍 Real-time YouTube & Web resource search APIs
-- 📧 Twilio/Email integration for future notifications
-- 🌐 FastAPI backend with MongoDB integration
-- ⚡ Fully responsive React frontend built with TypeScript
+-  Intelligent goal-based AI roadmap generation
+-  Modular OpenAI Agent system using function tools
+-  Weekly planning with skill tracking & visualization support
+- Real-time YouTube & Web resource search APIs
+- Twilio/Email integration for future notifications
+-  FastAPI backend with MongoDB integration
+-  Fully responsive React frontend built with TypeScript
 
 ---
 
