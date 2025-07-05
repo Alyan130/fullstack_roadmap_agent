@@ -7,9 +7,6 @@ from agent.objectives import objectives_agent
 async def run_agents(data): 
 
     result = await Runner.run(objectives_agent,data)
-    # lst = list(result.final_output)
-    # my_tup = lst[0]
-    # objectives = my_tup[1]
     output = result.final_output
    
    #objectives obtained

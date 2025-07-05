@@ -6,9 +6,11 @@ import { motion } from "framer-motion"
 import Barchart from "./barchart"
 import Piechart from "./pieChart"
 import { Roadmap } from "@/App"
+import { BrushUpdateDispatchContext } from "recharts/types/context/brushUpdateContext"
+import RoadmapDialog from "./send-email"
 
 
-export default function RoadmapGrid({ data }:{data:Roadmap|null}) {
+export default function RoadmapGrid({ data }:{data:Roadmap}) {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -56,9 +58,9 @@ export default function RoadmapGrid({ data }:{data:Roadmap|null}) {
   }
 
   return (
-    <div className="min-h-screen p-2">
+    <div className="h-screen overflow-y-auto p-2 hide-scrollbar">
       <div className="w-full">
-  
+      
         <motion.div
           className="text-center mb-8"
           initial={{ opacity: 0, y: -20 }}
@@ -68,11 +70,19 @@ export default function RoadmapGrid({ data }:{data:Roadmap|null}) {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3 pt-3">
             Your Learning Roadmap
           </h1>
-          <p className="text-base text-slate-600 max-w-2xl mx-auto">
+          <p className="text-base text-slate-300 max-w-2xl mx-auto mb-7">
             Follow this carefully curated weekly plan to master your chosen technology stack
           </p>
-        </motion.div>
 
+        <RoadmapDialog trigger={<Button
+        className="mb-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+      >
+        Get My Roadmap
+      </Button>}>
+      </RoadmapDialog>
+      
+        </motion.div>
+        
         <motion.div
           className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5"
           variants={containerVariants}

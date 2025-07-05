@@ -90,7 +90,7 @@ function Sidebarform({formSubmitted,setFormSubmitted}:
   }
 
   return (
-    <div className='w-full min-h-screen bg-[#170730] p-6 hidden sm:block'>
+    <div className='w-full h-screen overflow-y-auto bg-[#170730] p-6 pt-0 hidden sm:block hide-scrollbar'>
       <div className="max-w-md mx-auto">
         <h2 className="text-2xl font-bold text-white mb-6">Learning Profile</h2>
         
