@@ -84,7 +84,7 @@ export default function RoadmapGrid({ data }:{data:Roadmap|null}) {
 
             return (
               <motion.div key={item.week}  whileHover="hover">
-                <Card className="overflow-hidden border-0 hover:scale-105 ease-in-out transition-all shadow-md hover:shadow-lg  bg-white/80 backdrop-blur-sm h-full py-0">
+                <Card className="overflow-hidden border-0 hover:scale-105 ease-linear transition-all shadow-md hover:shadow-lg duration-200  bg-white/80 backdrop-blur-sm h-full py-0">
                   {/* Week Badge */}
                   <div className="absolute top-3 right-3 z-10">
                     <Badge className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 text-xs px-2 py-1">

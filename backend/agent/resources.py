@@ -7,60 +7,73 @@ from dotenv import load_dotenv
 import os
 import requests
 from typing import List
+from playwright.async_api import async_playwright
 
 load_dotenv()
 
 set_tracing_disabled(disabled=True)
-
-YOUTUBE_KEY = os.getenv("youtube_key")
 SERPER_KEY  = os.getenv("Serper_key")
+MAX_RETRIES=5
 
 
 
-@function_tool
-async def SearchYouTubeTool(objective: str) -> dict:
-    """
-    Search YouTube for a tutorial or video based on objective.
-    Input -> objective
-    Output -> title, url and resource type, thumbnail.
-    """
-    search_url = "https://www.googleapis.com/youtube/v3/search"
-
-    params = {
-        "key": YOUTUBE_KEY,
-        "q": objective,
-        "part": "snippet",
-        "type": "video",
-        "maxResults": 1
-    }
-
+async def is_valid_youtube_video(video_url: str) -> bool:
+    """Check if a YouTube video is valid using oEmbed."""
+    oembed_url = "https://www.youtube.com/oembed"
+    params = {"url": video_url, "format": "json"}
     async with httpx.AsyncClient() as client:
-        response = await client.get(search_url, params=params)
-        data = response.json()
+        response = await client.get(oembed_url, params=params)
+        return response.status_code == 200
 
-        if "items" not in data or not data["items"]:
-            return {
-                "resource_type": "video",
-                "title": "No video found",
-                "url": "",
-                "thumnail":""
-            }
+@function_tool
+async def searchYoutubeTool(query: str, max_results: int = 5):
+    """Use Playwright to search YouTube and return the first valid video result."""
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
+        await page.goto(f"https://www.youtube.com/results?search_query={query}", timeout=60000)
 
-        video = data["items"][0]
-        video_id = video["id"]["videoId"]
-        title = video["snippet"]["title"]
-        thumbnail_url = video["snippet"]["thumbnails"]["high"]["url"]
+        await page.wait_for_selector("ytd-video-renderer", timeout=10000)
+        videos = await page.query_selector_all("ytd-video-renderer")
 
-        return {
-            "resource_type": "video",
-            "title": title,
-            "url": f"https://www.youtube.com/watch?v={video_id}",
-            "thumbnail":thumbnail_url
-        }
+        results = []
+
+        for video in videos[:max_results]:
+            title_el = await video.query_selector("a#video-title")
+            thumbnail_el = await video.query_selector("img")
+
+            if not title_el or not thumbnail_el:
+                continue
+
+            title = (await title_el.get_attribute("title")) or "Untitled"
+            href = await title_el.get_attribute("href")
+            thumbnail_url = await thumbnail_el.get_attribute("src")
+
+            if not href or "/watch?" not in href:
+                continue
+
+            video_url = f"https://www.youtube.com{href}"
+
+            if await is_valid_youtube_video(video_url):
+                results.append({
+                    "title": title,
+                    "url": video_url,
+                    "thumbnail": thumbnail_url,
+                    "resource_type": "video"
+                })
+                break 
+
+        await browser.close()
+        return results if results else [{
+                    "title":"",
+                    "url": "",
+                    "thumbnail": "",
+                    "resource_type": "video"
+                }]
 
 
 @function_tool
-def searchWeb(query):
+def searchWebTool(query):
   '''
   Search the blog on the Web based on objective.
   Input -> objective
@@ -92,30 +105,78 @@ def searchWeb(query):
         }
 
 
+month=1
+userprompt=f'''
+My goal is to become a Web developer.
+I have 5 years in software development experience and my key skills include context api (Expert) and
+hooks (Intermediate).
+I'm looking to achieve this goal within {1} months, dedicating 20 hours per week, and my
+preferred learning style is hands-on projects and self-study
+'''
+
 
 resource_agent = Agent(
     name = "Resource Agent",
     instructions='''
 You are a ResourcesAgent.
 
-You are given a comma-separated string of learning objectives. Your task is to generate one useful resource (video or blog) for each objective.
+Your task is to assist in building a learning roadmap by finding one relevant resource (video or blog) for each learning objective.
 
-Tool usage:
-- Use `SearchYouTubeTool` for the first half of objectives
-- Use `SearchWebTool` for the second half
+---
 
-For each objective, return a dictionary with:
-- `objective`: the exact text of the objective
-- `resource_type`: either "video" or "blog"
-- `title`: the video or article title
-- `url`: the full working link to the resource
-- `thumbnail`: picture of video, you get this only from SearchYoutubeTool
+- Tool Access:
 
-Always return a list of resource dictionaries in the order the objectives were received.
+1. searchYouTubeTool(objective: str)
+   - Finds a YouTube video related to the objective.
+   - Returns:
+     {
+       "title": "...",
+       "url": "...",
+       "resource_type": "video",
+       "thumbnail": "..."
+     }
 
--You must attach objective to each resource to detemine which resource belongs to which objective this is must.
+2. searchWebTool(objective: str)
+   - Finds a blog, article, or guide related to the objective.
+   - Returns:
+     {
+       "title": "...",
+       "url": "...",
+       "resource_type": "blog",
+       "thumbnail": "..."  # Optional
+     }
+
+---
+
+-Tool Usage Rules:
+
+- You will receive a **Python list of objectives**.
+- For the **first half** of the list (e.g., first N//2), use **searchYouTubeTool**.
+- For the **second half**, use **searchWebTool**.
+- You MUST call one tool per objective. Do not mix or reverse tool usage.
+
+---
+
+- Restrictions:
+
+- DO NOT fabricate or guess any resource data.
+- DO NOT include any extra text, comments, headings, or explanations.
+- Return the **tool’s exact output**, and attach the original objective to each result.
+
+---
+- Final Output Format:
+
+Return a **Python list of dictionaries**, where each dictionary looks like this:
+
+{
+  "objective": "<original objective>",
+  "resource_type": "video" or "blog",
+  "title": "<from tool>",
+  "url": "<from tool>",
+  "thumbnail": "<optional, from tool>"
+}
+
 ''',
-   tools=[searchWeb,SearchYouTubeTool],
-   model=model,
-   output_type=List[Resource]
+   tools=[searchWebTool,searchYoutubeTool],
+   model=model
 )

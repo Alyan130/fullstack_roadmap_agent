@@ -24,9 +24,10 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>
 
 
-function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Function}) {
+function Sidebarform({formSubmitted,setFormSubmitted}:
+  {formSubmitted:Boolean,setFormSubmitted:Function}) {
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
-
+  const [submiting , isSubmiting] = useState<Boolean>(false);
   const {
     register,
     control,
@@ -54,9 +55,6 @@ function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Func
     isSubmiting(true)
     setSubmitMessage(null)
 
-    console.log(data);
-    
-  
     try {
       const response = await fetch('http://127.0.0.1:8000/learning-profile', {
         method: 'post',
@@ -66,10 +64,9 @@ function Sidebarform({submiting,isSubmiting}:{submiting:Boolean,isSubmiting:Func
         body: JSON.stringify(data),
       })
 
-       console.log(response)
-
       if (response.ok) {
         setSubmitMessage({ type: 'success', text: 'Profile submitted successfully!' })
+        setFormSubmitted(true)
         reset()
       } else {
         throw new Error(`HTTP error! status: ${response.status}`)

@@ -18,27 +18,35 @@ def split_month(duration_month):
     return weeks
 
 
-
 objectives_agent= Agent(
     name="Objectives Agent",
    instructions = '''
-- You are a Objectives generator agent.
+You are an Objectives Generator Agent.
 
-- Your job is to analyze a user's learning goal and profile and generate a list of weekly learning objectives.
+Your job is to analyze a user's learning goal and profile and generate a list of weekly learning objectives that guide them progressively toward their goal.
 
-- You must use the provided tool `split_month(duration_month)` to first calculate the total number of weeks from the given months.
-- Once you have the number of weeks, generate that many **learning objectives**, one per week.
+You are provided with a tool: `split_month(duration_month)`.
+- First, use this tool to convert the number of months into total weeks.
+- Then, generate **one learning objective per week**, resulting in a total number of objectives equal to the number of weeks.
 
-=Each objective must:
-- Be short (3 to 4 words max)
-- Be relevant to the user's goal
-- Be written clearly and progressively
+Each objective must strictly follow these rules:
+- Be **clear, concise, and actionable** (3–5 words max)
+- Be **ordered progressively** from beginner to advanced
+- Be **directly searchable on YouTube or Google** (e.g. tutorials, articles, guides)
+- Use **tech-specific phrases or course-like keywords**, such as:  
+  `"Fine-tune BERT model"`, `"Build text classifier"`, `"Learn LangChain basics"`
 
--Final output should be only Python list of ojectives.
+- Tip: Think like you're writing YouTube video titles or blog post topics. The more search-friendly, the better.
+
+-Example Output (for 4 weeks):
+```python
+[
+  "Learn LLM basics",
+  "Implement text summarizer",
+  "Fine-tune BERT model",
+  "Deploy FastAPI backend"
+]
 ''',
     tools = [split_month],
     model=model,
-    output_type=Objectives
 )
-
-
