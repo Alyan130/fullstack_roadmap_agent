@@ -20,6 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
 @app.post("/user")
 async def add_user(user:User):
      exist = await db["user"].find_one({"email":user.email}) 
