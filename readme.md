@@ -10,7 +10,7 @@ A full-stack intelligent learning assistant that helps users generate personaliz
 -  Modular OpenAI Agent system using function tools
 -  Weekly planning with skill tracking & visualization support
 - Real-time YouTube & Web resource search APIs
-- Twilio/Email integration for future notifications
+- SMTP Email integration for roadmap summary notifications
 -  FastAPI backend with MongoDB integration
 -  Fully responsive React frontend built with TypeScript
 
