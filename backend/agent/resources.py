@@ -7,69 +7,53 @@ from dotenv import load_dotenv
 import os
 import requests
 from typing import List
-from playwright.async_api import async_playwright
 
 load_dotenv()
 
 set_tracing_disabled(disabled=True)
-SERPER_KEY  = os.getenv("Serper_key")
-MAX_RETRIES=5
-
-
-
-async def is_valid_youtube_video(video_url: str) -> bool:
-    """Check if a YouTube video is valid using oEmbed."""
-    oembed_url = "https://www.youtube.com/oembed"
-    params = {"url": video_url, "format": "json"}
-    async with httpx.AsyncClient() as client:
-        response = await client.get(oembed_url, params=params)
-        return response.status_code == 200
+SERPER_KEY  = os.getenv("SERPER_KEY")
+YOUTUBE_KEY = os.getenv("YOUTUBE_KEY")
 
 @function_tool
-async def searchYoutubeTool(query: str, max_results: int = 5):
-    """Use Playwright to search YouTube and return the first valid video result."""
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page()
-        await page.goto(f"https://www.youtube.com/results?search_query={query}", timeout=60000)
+async def SearchYouTubeTool(objective: str) -> dict:
+    """
+    Search YouTube for a tutorial or video based on objective.
+    Input -> objective
+    Output -> title, url and resource type, thumbnail.
+    """
+    search_url = "https://www.googleapis.com/youtube/v3/search"
 
-        await page.wait_for_selector("ytd-video-renderer", timeout=10000)
-        videos = await page.query_selector_all("ytd-video-renderer")
+    params = {
+        "key": YOUTUBE_KEY,
+        "q": objective,
+        "part": "snippet",
+        "type": "video",
+        "maxResults": 1
+    }
 
-        results = []
+    async with httpx.AsyncClient() as client:
+        response = await client.get(search_url, params=params)
+        data = response.json()
 
-        for video in videos[:max_results]:
-            title_el = await video.query_selector("a#video-title")
-            thumbnail_el = await video.query_selector("img")
+        if "items" not in data or not data["items"]:
+            return {
+                "resource_type": "video",
+                "title": "No video found",
+                "url": "",
+                "thumnail":""
+            }
 
-            if not title_el or not thumbnail_el:
-                continue
+        video = data["items"][0]
+        video_id = video["id"]["videoId"]
+        title = video["snippet"]["title"]
+        thumbnail_url = video["snippet"]["thumbnails"]["high"]["url"]
 
-            title = (await title_el.get_attribute("title")) or "Untitled"
-            href = await title_el.get_attribute("href")
-            thumbnail_url = await thumbnail_el.get_attribute("src")
-
-            if not href or "/watch?" not in href:
-                continue
-
-            video_url = f"https://www.youtube.com{href}"
-
-            if await is_valid_youtube_video(video_url):
-                results.append({
-                    "title": title,
-                    "url": video_url,
-                    "thumbnail": thumbnail_url,
-                    "resource_type": "video"
-                })
-                break 
-
-        await browser.close()
-        return results if results else [{
-                    "title":"",
-                    "url": "",
-                    "thumbnail": "",
-                    "resource_type": "video"
-                }]
+        return {
+            "resource_type": "video",
+            "title": title,
+            "url": f"https://www.youtube.com/watch?v={video_id}",
+            "thumbnail":thumbnail_url
+        }
 
 
 @function_tool
@@ -177,6 +161,6 @@ Return a **Python list of dictionaries**, where each dictionary looks like this:
 }
 
 ''',
-   tools=[searchWebTool,searchYoutubeTool],
+   tools=[searchWebTool,SearchYouTubeTool],
    model=model
 )
