@@ -10,7 +10,7 @@ import { BrushUpdateDispatchContext } from "recharts/types/context/brushUpdateCo
 import RoadmapDialog from "./send-email"
 
 
-export default function RoadmapGrid({ data }:{data:Roadmap}) {
+export default function RoadmapGrid({ data }:{data:Roadmap|null}) {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

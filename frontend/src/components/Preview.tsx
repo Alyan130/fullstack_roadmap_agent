@@ -37,13 +37,13 @@ export default function Preview() {
       gradient: "from-purple-500 to-violet-500",
       iconColor: "text-white",
     },
-    // {
-    //   icon: Mail,
-    //   title: "PDF Email Reports",
-    //   description: "Compiles your roadmap into professional PDF reports and sends them directly to your email.",
-    //   gradient: "from-blue-600 to-purple-600",
-    //   iconColor: "text-white",
-    // },
+    {
+      icon: Mail,
+      title: "PDF Email Report",
+      description: "Compiles your roadmap into professional PDF reports and sends them directly to your email.",
+      gradient: "from-blue-600 to-purple-600",
+      iconColor: "text-white",
+    },
   ]
 
   const containerVariants = {

@@ -38,53 +38,6 @@ export interface Roadmap {
 
 function App() {
   const [formSubmitted, setFormSubmitted]= useState<Boolean>(false)
-
-  const learningPlan = {
-    _id:"123",
-    weekly_plan: [
-      {
-        week: 1,
-        resource:
-          {
-            objective: "Python Basics",
-            resource_type: "article",
-            title: "Python Syntax Guide",
-            url: "https://example.com/python-syntax"
-          },
-        },
-        {
-        week: 2,
-        resource:
-          {
-            objective: "Deep Learning Fundamentals",
-            resource_type: "interactive",
-            title: "TensorFlow Playground",
-            url: "https://example.com/tensorflow-play"
-          },
-        },
-      {
-        week: 3,
-        resource:
-          {
-            objective: "LLM Architecture",
-            resource_type: "research paper",
-            title: "Attention Is All You Need",
-            url: "https://example.com/attention-paper"
-          },
-        },
-    ],
-    week_per_skill: [
-      { week: 1, objective: "Python Programming" },
-      { week: 2, objective: "Deep Learning" },
-      { week: 3, objective: "LLM Architecture" },
-    ],
-    skill_boost: [
-      { name: "Machine Learning", confidence: 40 },
-      { name: "LLMs", confidence: 30 },
-      { name: "Python", confidence: 65 },
-      { name: "Neural Networks", confidence: 35 }
-    ]
-  };
   
   return (
     <>
@@ -96,10 +49,9 @@ function App() {
        setFormSubmitted={setFormSubmitted}
        />
       </aside>
-      <section className='w-full sm:w-[70%] mb-5  sm:mr-5'>
+      <section className='w-full sm:w-[70%] mb-5  sm:mr-5 sm:px10 sm:pb-4'>
       <>
-       {/* {formSubmitted ? <GenerateRoadmapButton/> :<Preview/>} */}
-       <RoadmapGrid data={learningPlan}/>
+       {formSubmitted ? <GenerateRoadmapButton/> : <Preview/>}
       </>
       </section>
     </div>

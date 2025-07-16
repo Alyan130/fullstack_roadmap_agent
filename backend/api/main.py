@@ -113,24 +113,30 @@ async def get_roadmap():
 
 @app.get("/agent-working")
 async def get_profile():
-     cursor = db["learning_profiles"].find().sort("_id",-1)
-     profiles = await cursor.to_list(length=1)
-     if not profiles:
-       raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Learning profile not found")
-     else:
-       profile = profiles[0]
-       profile["_id"] = str(profile["_id"])
-       result = await run_agents(str(profile))
-
-     cleaned_result = convert_object_ids(result)
-     await db["roadmap_details"].insert_one(cleaned_result)
+    cursor = db["learning_profiles"].find().sort("_id",-1)
+    profiles = await cursor.to_list(length=1)
     
-     return JSONResponse(
-           status_code=status.HTTP_200_OK,
-           content={
-               "data":cleaned_result
-           }
-       )
+    if not profiles:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Learning profile not found")
+    
+    profile = profiles[0]
+    profile["_id"] = str(profile["_id"])
+
+    result = await run_agents(str(profile))
+
+    cleaned_result = convert_object_ids(result)
+    
+    await db["roadmap_details"].insert_one(cleaned_result)
+
+    data = convert_object_ids(cleaned_result)
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": data
+        }
+    )
+
 
 
 @app.get("/send-email")
