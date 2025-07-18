@@ -10,7 +10,7 @@ import { BrushUpdateDispatchContext } from "recharts/types/context/brushUpdateCo
 import RoadmapDialog from "./send-email"
 
 
-export default function RoadmapGrid({ data }:{data:Roadmap|null}) {
+export default function RoadmapGrid({ data }) {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -45,15 +45,15 @@ export default function RoadmapGrid({ data }:{data:Roadmap|null}) {
     },
   }
 
-  const getResourceIcon = (type: string) => {
+  const getResourceIcon = (type) => {
     return type === "video" ? Play : BookOpen
   }
 
-  const getResourceColor = (type: string) => {
+  const getResourceColor = (type) => {
     return type === "video" ? "from-purple-500 to-pink-500" : "from-blue-500 to-purple-500"
   }
 
-  const handleResourceClick = (url: string) => {
+  const handleResourceClick = (url) => {
     window.open(url, "_blank", "noopener,noreferrer")
   }
 

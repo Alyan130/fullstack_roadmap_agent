@@ -8,16 +8,9 @@ import {
   Legend,
 } from "recharts"
 
-import {
-  ChartContainer,
-  type ChartConfig,
-} from "@/components/ui/chart"
+import { ChartContainer} from "./ui/chart"
 
 
-interface dataItem {
- name:string,
- confidence:number
-}
 
 const COLORS = ["#3b82f6", "#6366f1", "#10b981"] 
 
@@ -26,9 +19,9 @@ const chartConfig = {
     label: "Confidence",
     color: "#3b82f6",
   },
-} satisfies ChartConfig
+} 
 
-export default function Piechart({data}:{data:dataItem[]}) {
+export default function Piechart({data}) {
   return (
     <div className="w-full text-center pt-4 pb-4">
     <h1 className="text-2xl font-semibold text-slate-200 relative inline-block">
@@ -48,7 +41,7 @@ export default function Piechart({data}:{data:dataItem[]}) {
           fill="#8884d8"
           label
         >
-          {data.map((entry, index) => (
+          {data.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>

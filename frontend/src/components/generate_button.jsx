@@ -1,24 +1,22 @@
 import { Sparkles, ArrowRight, Loader2, CheckCircle, Zap } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useState } from "react"
-import { Roadmap } from "@/App"
 import AgentLoader from "./Loader"
 import RoadmapGrid from "./Agent"
 
-type ButtonState = "idle" | "loading" | "success"
 
 export default function GenerateRoadmapButton() {
-  const [buttonState, setButtonState] = useState<ButtonState>("idle")
-  const [loading, setLoading] = useState<Boolean>(false);
-  const [data, setData] = useState<Roadmap | null>(null)
-  const [success , setSuccess] =useState<Boolean>(false)
+  const [buttonState, setButtonState] = useState("idle")
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null)
+  const [success , setSuccess] =useState(false)
 
   const handleClick = async () => {
         try{
         setLoading(true)
         const res = await fetch("http://127.0.0.1:8000/agent-working")
         const data = await res.json()
-        const roadMapData:Roadmap = data.data
+        const roadMapData= data.data
         setData(roadMapData)
         setSuccess(true)
         }catch(error){

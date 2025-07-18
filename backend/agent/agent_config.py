@@ -11,7 +11,9 @@ API_KEY = os.getenv("GEMINI_KEY")
 
 external_client = AsyncOpenAI(
     api_key=API_KEY,
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    timeout=120,
+    max_retries=3
 )
 
 model = OpenAIChatCompletionsModel(

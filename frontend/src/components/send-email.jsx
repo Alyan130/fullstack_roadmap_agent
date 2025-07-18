@@ -1,4 +1,6 @@
-import type React from "react"
+"use client" 
+
+import React from "react"
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -8,21 +10,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { User, Mail, Send, Loader2, CheckCircle, AlertCircle } from "lucide-react"
 
-type DialogState = "form" | "email-sent" | "loading" | "success" | "error"
 
-interface FormData {
-  name: string
-  email: string
-}
 
-export default function RoadmapDialog({trigger}:{trigger:React.ReactNode}) {
-  const [dialogState, setDialogState] = useState<DialogState>("form")
-  const [formData, setFormData] = useState<FormData>({ name: "", email: "" })
-  const [errors, setErrors] = useState<Partial<FormData>>({})
+export default function RoadmapDialog({trigger}) {
+  const [dialogState, setDialogState] = useState("form")
+  const [formData, setFormData] = useState({ name: "", email: "" })
+  const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const validateForm = (): boolean => {
-    const newErrors: Partial<FormData> = {}
+  const validateForm = () => {
+    const newErrors = {}
 
     if (!formData.name.trim()) {
       newErrors.name = "Username is required"
@@ -38,7 +35,7 @@ export default function RoadmapDialog({trigger}:{trigger:React.ReactNode}) {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (!validateForm()) return
@@ -93,7 +90,7 @@ export default function RoadmapDialog({trigger}:{trigger:React.ReactNode}) {
     setIsSubmitting(false)
   }
 
-  const handleInputChange = (field: keyof FormData, value: string) => {
+  const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }))
